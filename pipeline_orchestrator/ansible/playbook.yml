@@ -1,0 +1,22 @@
+- name: Deploy app to slave
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull app image
+      shell: docker pull mavles31/pipeline-app:latest
+
+    - name: Run app container
+      shell: docker run -d -p 80:5000 mavles31/pipeline-app:latest

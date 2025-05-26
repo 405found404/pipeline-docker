@@ -1,0 +1,35 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Clone Repo') {
+      steps {
+        git 'https://github.com/your-username/pipeline-orchestrator.git'
+      }
+    }
+
+    stage('Build Docker Image') {
+      steps {
+        sh 'docker build -t mavles31/pipeline-app ./app'
+      }
+    }
+
+    stage('Push Image to Docker Hub') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+          sh "echo $PASS | docker login -u $USER --password-stdin"
+          sh "docker push mavles31/pipeline-app:latest"
+        }
+      }
+    }
+
+    stage('Deploy on Slave via Ansible') {
+      steps {
+        sh 'ansible-playbook -i ansible/inventory.ini ansible/playbook.yml'
+      }
+    }
+  }
+}
+
+
+
