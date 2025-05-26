@@ -10,7 +10,7 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
-        sh 'docker buildx build -t mavles31/pipeline-app./app'
+        sh 'docker buildx build -t mavles31/pipeline_orchestrator./app'
       }
     }
 
